@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FlagController;
+use App\Http\Controllers\GlossaryAnalyticController;
 use App\Http\Controllers\GlossaryController;
 use App\Http\Controllers\GlossarySubjectController;
 use App\Http\Controllers\HomeController;
@@ -278,6 +279,10 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
     Route::prefix('subscribe')->middleware(['auth', 'verified'])->controller(SubscribeController::class)->group(function(){
         Route::get('/', 'index')->name('subscribe.index');
         Route::post('', 'store')->name('subscribe.store');
+    });
+
+    Route::middleware(['auth', 'admin'])->controller(GlossaryAnalyticController::class)->group(function(){
+        Route::get('admin/glossary-analytics', 'index');
     });
 });
 Route::prefix('laravel-filemanager')->middleware('web', 'auth')->group(function () {
