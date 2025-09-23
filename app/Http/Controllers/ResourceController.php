@@ -376,7 +376,7 @@ class ResourceController extends Controller
                 $fileName = $attachments->getClientOriginalName();
                 $fileExtension = \File::extension($fileName);
                 $diskType = 's3';
-                if($fileExtension == 'epub'){
+                if(config('app.env') != 'production'){
                     $diskType = 'public';
                 }
                 $uniqueId = uniqid(); // Generate a unique ID
@@ -978,7 +978,7 @@ class ResourceController extends Controller
                 $uniqueId = uniqid(); // Generate a unique ID
                 $fileName = auth()->user()->id . '_' . $uniqueId . '_' . time() . '.' . $fileExtension;
                 $diskType = 's3';
-                if($fileExtension == 'epub'){
+                if(config('app.env') != 'production'){
                     $diskType = 'public';
                 }
                 unset($validatedData['attachments']);
@@ -1451,7 +1451,7 @@ class ResourceController extends Controller
             ];
 
             $diskType = 's3';
-            if($attachment->file_mime == 'application/epub+zip'){
+            if(config('app.env') != 'production'){
                 $diskType = 'public';
             }
             $file = Storage::disk($diskType)->get('resources/'.$file_name);
