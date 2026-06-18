@@ -12,7 +12,7 @@
     @include('layouts.search')
 @endsection
 @section('content')
-    <div class="container pt-3 px-0 text-center">
+    <div class="container pt-3 text-center">
         <a href="{{ route('storyweaver-confirm', ['landing_page' => 'storyweaver_default']) }}" class="text-decoration-none">
             <div class="row align-items-center justify-content-between py-5">
                 <div class="col-md-6">
@@ -32,7 +32,9 @@
                 </div>
             </div>
         </a>
-        <hr class="border-secondary border-5 opacity-100 mx-n4">
+    </div>
+    <hr class="border-secondary border-5 opacity-100 mx-0">
+    <div class="container pt-3 text-center">
         <h2 class="p-2 mb-4">
             @lang('Explore our subjects')
         </h2>
@@ -53,7 +55,7 @@
         </div>
     </div>
     <div class="bg-light w-100">
-        <div class="container pt-3 px-0 text-center">
+        <div class="container pt-3 text-center">
             <h2 class="p-2 mb-4">
                 @lang('Featured resource collections')
             </h2>
@@ -185,7 +187,7 @@
         </div>
     </div>
     <div class="bg-light w-100">
-        <div class="container pt-3 px-0 text-center">
+        <div class="container pt-3 text-center">
             <h2 class="mb-4 p-2">
                 @lang('Quickstart videos')
             </h2>
@@ -201,7 +203,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-md-6 mt-3 mt-md-0">
                     <div class="ratio ratio-16x9">
                         <iframe src="https://www.youtube-nocookie.com/embed/{{ $howToVideoId }}"
                                 title="@lang('How to use our library')"

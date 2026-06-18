@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
         new TomSelect(el, {
             plugins: ['remove_button'],
             placeholder: '...',
+            maxOptions: false,
         });
     });
 });
