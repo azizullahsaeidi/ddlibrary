@@ -150,6 +150,6 @@ class CommentControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get("/en/admin/comments/published/{$comment->id}");
 
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 }

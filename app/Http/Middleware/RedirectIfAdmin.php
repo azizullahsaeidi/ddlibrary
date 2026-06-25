@@ -15,7 +15,7 @@ class RedirectIfAdmin
     {
         if (Auth::guard($guard)->check()) {
             if (! isAdmin()) {
-                return redirect('/home');
+                abort(403);
             }
         } else {
             return redirect('/login');

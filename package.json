@@ -14,7 +14,6 @@
         "@fontsource/eb-garamond": "^5.2.7",
         "@fontsource/inter": "^5.2.8",
         "@fontsource/noto-kufi-arabic": "^5.2.9",
-        "@fortawesome/fontawesome-free": "^6.7.2",
         "@phosphor-icons/web": "^2.1.2",
         "@popperjs/core": "^2.11.6",
         "axios": "^1.15.0",

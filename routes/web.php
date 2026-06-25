@@ -11,6 +11,10 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FlagController;
+use App\Http\Controllers\Forum\CategoryController;
+use App\Http\Controllers\Forum\ForumUserController;
+use App\Http\Controllers\Forum\PostController;
+use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\GlossaryAnalyticsController;
 use App\Http\Controllers\GlossaryController;
 use App\Http\Controllers\GlossarySubjectController;
@@ -349,6 +353,39 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
         Route::get('privacy-policy', 'index')->name('privacy-policy');
         Route::get('mobile-privacy-policy', 'mobilePrivacyPolicy')->name('mobile-privacy-policy');
         Route::get('opt-out', 'optOut')->name('opt-out');
+    });
+
+    Route::prefix('forum')->group(function () {
+
+        // Public
+        Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
+        Route::get('threads/create', [ThreadController::class, 'create'])->name('threads.create')->middleware('auth');
+        Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
+
+        // Admin only (must be before categories/{category})
+        Route::middleware(['auth', 'admin'])->group(function () {
+            Route::resource('categories', CategoryController::class)->except(['show']);
+            Route::patch('threads/{thread}/lock', [ThreadController::class, 'lock'])->name('threads.lock');
+            Route::patch('threads/{thread}/pin', [ThreadController::class, 'pin'])->name('threads.pin');
+            Route::patch('threads/{thread}/move', [ThreadController::class, 'move'])->name('threads.move');
+            Route::patch('users/{user}/ban', [ForumUserController::class, 'ban'])->name('forum.users.ban');
+        });
+
+        // Public category show (wildcard, must be last)
+        Route::get('categories/{category}', [CategoryController::class, 'show'])->name('threads.categories.show');
+
+        // Auth required
+        Route::middleware('auth')->group(function () {
+            Route::post('threads', [ThreadController::class, 'store'])->name('threads.store');
+            Route::get('threads/{thread}/edit', [ThreadController::class, 'edit'])->name('threads.edit');
+            Route::put('threads/{thread}', [ThreadController::class, 'update'])->name('threads.update');
+            Route::delete('threads/{thread}', [ThreadController::class, 'destroy'])->name('threads.destroy');
+
+            Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
+            Route::put('threads/{thread}/posts/{post}', [PostController::class, 'update'])->name('threads.posts.update');
+            Route::delete('threads/{thread}/posts/{post}', [PostController::class, 'destroy'])->name('threads.posts.destroy');
+        });
+
     });
 });
 

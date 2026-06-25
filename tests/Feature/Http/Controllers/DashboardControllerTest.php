@@ -68,7 +68,7 @@ class DashboardControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get('en/admin');
 
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 
     public function test_dashboard_page_is_not_accessible_to_guests(): void
