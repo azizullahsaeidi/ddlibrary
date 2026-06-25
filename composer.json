@@ -30,6 +30,7 @@
         "spatie/laravel-activitylog": "^4.12",
         "spatie/laravel-analytics": "^5.7",
         "spatie/laravel-honeypot": "^4.7",
+        "spatie/laravel-sluggable": "^4.0",
         "tinymce/tinymce": "^8.3",
         "usmanhalalit/laracsv": "^2.1",
         "yajra/laravel-datatables-oracle": "^12.7"
