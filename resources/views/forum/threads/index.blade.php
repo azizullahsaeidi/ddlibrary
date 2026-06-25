@@ -10,7 +10,7 @@
                 <p class="text-muted mb-0">@lang('Ask, share, and learn together')</p>
             </div>
             @auth
-                <a href="{{ route('threads.create') }}" class="btn btn-primary">@lang('New Thread')</a>
+                <a href="{{ route('threads.create') }}" class="btn btn-primary me-1">@lang('New Thread')</a>
                 @if(isAdmin())
                     <a href="{{ route('categories.index') }}" class="btn btn-outline-secondary btn-sm">
                         @lang('Manage Categories')

@@ -12,6 +12,7 @@ use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\FlagController;
 use App\Http\Controllers\Forum\CategoryController;
+use App\Http\Controllers\Forum\ForumUserController;
 use App\Http\Controllers\Forum\PostController;
 use App\Http\Controllers\Forum\ThreadController;
 use App\Http\Controllers\GlossaryAnalyticsController;
@@ -358,7 +359,6 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
 
         // Public
         Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
-        Route::get('threads/create', [ThreadController::class, 'create'])->name('threads.create');
         Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
 
         // Admin only (must be before categories/{category})
@@ -376,13 +376,14 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
         // Auth required
         Route::middleware('auth')->group(function () {
             Route::post('threads', [ThreadController::class, 'store'])->name('threads.store');
+            Route::get('threads/create', [ThreadController::class, 'create'])->name('threads.create');
             Route::get('threads/{thread}/edit', [ThreadController::class, 'edit'])->name('threads.edit');
             Route::put('threads/{thread}', [ThreadController::class, 'update'])->name('threads.update');
             Route::delete('threads/{thread}', [ThreadController::class, 'destroy'])->name('threads.destroy');
 
             Route::post('threads/{thread}/posts', [PostController::class, 'store'])->name('threads.posts.store');
-            Route::put('posts/{post}', [PostController::class, 'update'])->name('posts.update');
-            Route::delete('posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+            Route::put('threads/{thread}/posts/{post}', [PostController::class, 'update'])->name('threads.posts.update');
+            Route::delete('threads/{thread}/posts/{post}', [PostController::class, 'destroy'])->name('threads.posts.destroy');
         });
 
     });

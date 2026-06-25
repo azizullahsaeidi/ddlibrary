@@ -50,6 +50,6 @@ class DownloadControllerTest extends TestCase
 
         $response = $this->actingAs($user)->get(url('en/admin/reports/downloads'));
 
-        $response->assertStatus(302);
+        $response->assertStatus(403);
     }
 }
