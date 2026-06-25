@@ -5,7 +5,10 @@
 @section('content')
     <div class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0">@lang('Forum')</h1>
+            <div>
+                <h3 class="h3 mb-0">@lang('Forum')</h3>
+                <p class="text-muted mb-0">@lang('Ask, share, and learn together')</p>
+            </div>
             @auth
                 <a href="{{ route('threads.create') }}" class="btn btn-primary">@lang('New Thread')</a>
                 @if(isAdmin())
