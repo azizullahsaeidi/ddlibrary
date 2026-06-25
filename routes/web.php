@@ -359,6 +359,7 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
 
         // Public
         Route::get('threads', [ThreadController::class, 'index'])->name('threads.index');
+        Route::get('threads/create', [ThreadController::class, 'create'])->name('threads.create')->middleware('auth');
         Route::get('threads/{thread}', [ThreadController::class, 'show'])->name('threads.show');
 
         // Admin only (must be before categories/{category})
@@ -376,7 +377,6 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
         // Auth required
         Route::middleware('auth')->group(function () {
             Route::post('threads', [ThreadController::class, 'store'])->name('threads.store');
-            Route::get('threads/create', [ThreadController::class, 'create'])->name('threads.create');
             Route::get('threads/{thread}/edit', [ThreadController::class, 'edit'])->name('threads.edit');
             Route::put('threads/{thread}', [ThreadController::class, 'update'])->name('threads.update');
             Route::delete('threads/{thread}', [ThreadController::class, 'destroy'])->name('threads.destroy');
