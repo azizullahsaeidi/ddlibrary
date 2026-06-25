@@ -6,8 +6,8 @@
         <div class="col-md-7 col-12 my-2">
             <div class="input-group">
                 <input type="text" id="search" name="search" class="form-control form-control-lg" placeholder="@lang('Search our growing library!')">
-                <button class="btn btn-primary btn-lg" type="submit">
-                    <i class="fas fa-search"></i>
+                <button class="btn btn-primary btn-lg d-flex align-items-center" type="submit">
+                    <i class="ph-light ph-magnifying-glass search-icons"></i>
                 </button>
                 @if(request()->routeIs('resourceList'))
                     <button class="btn btn-primary ms-1 d-flex align-items-center"
@@ -15,13 +15,13 @@
                             data-bs-toggle="offcanvas"
                             data-bs-target="#filterPanel"
                             title="@lang('Filter')">
-                        <i class="ph-fill ph-sliders filter-icon"></i>
+                        <i class="ph-fill ph-sliders search-icons"></i>
                     </button>
                 @else
                     <a href="{{ route('resourceList') }}#filterPanel"
                        class="btn btn-primary ms-1 d-flex align-items-center"
                        title="@lang('Filter')">
-                        <i class="ph-fill ph-sliders filter-icon"></i>
+                        <i class="ph-fill ph-sliders search-icons"></i>
                     </a>
                 @endif
             </div>

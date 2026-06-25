@@ -49,8 +49,8 @@
                         </a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa-solid fa-language"></i> @lang('Other languages')
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-1" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="ph-fill ph-translate"></i> @lang('Other languages')
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                             @foreach(LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
@@ -72,7 +72,10 @@
                 </ul>
                 <ul class="navbar-nav justify-content-end">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ URL::to('/resources') }}"><i class="fas fa-book"></i> @lang('Library')</a>
+                        <a class="nav-link d-flex align-items-center gap-1" href="{{ URL::to('/resources') }}"><i class="ph-fill ph-book"></i> @lang('Library')</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('threads.index') }}"><i class="ph-fill ph-users-three"></i> @lang('Community')</a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('storyweaver-confirm', ['landing_page' => 'storyweaver_default']) }}" class="nav-link" title="StoryWeaver">
@@ -84,12 +87,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('resource.form') }}"><i class="fas fa-upload"></i> @lang('Submit a resource')</a>
+                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('resource.form') }}"><i class="ph-fill ph-upload"></i> @lang('Submit a resource')</a>
                     </li>
                     @if (Auth::check())
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa-solid fa-circle-user fa-2xl"></i>
+                        <li class="nav-item dropdown user-icon">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="ph-fill ph-user-circle"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                 <a class="dropdown-item" href="{{ URL::to('/user/profile') }}" title="@lang('Account')">@lang('Account')</a>
@@ -102,7 +105,7 @@
                         </li>
                     @else
                         <li class="nav-item">
-                            <a href="{{ URL::to('/login') }}" class="btn btn-primary" title="@lang('Log in or Register')"><i class="fas fa-sign-in-alt"></i> @lang('Log in / Register')</a>
+                            <a href="{{ URL::to('/login') }}" class="btn btn-primary d-flex align-items-center gap-1" title="@lang('Log in or Register')"><i class="ph-fill ph-sign-in"></i> @lang('Log in / Register')</a>
                         </li>
                     @endif
                 </ul>
