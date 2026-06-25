@@ -36,6 +36,10 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $fillable = [
+        'forum_banned_at',
+    ];
+
     public function resource(): HasMany
     {
         return $this->hasMany(Resource::class);
@@ -76,6 +80,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function subscription(): HasOne
     {
         return $this->hasOne(Subscriber::class);
+    }
+
+    public function threads(): HasMany
+    {
+        return $this->hasMany(Thread::class);
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
     }
 
     /**
@@ -269,6 +283,11 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where('users.id', $userId)
             ->where('user_roles.role_id', 3)
             ->first();
+    }
+
+    public function isForumBanned(): bool
+    {
+        return $this->forum_banned_at !== null;
     }
 
     public function getAvatarAttribute()
