@@ -75,7 +75,16 @@
                         <a class="nav-link d-flex align-items-center gap-1" href="{{ URL::to('/resources') }}"><i class="ph-fill ph-book"></i> @lang('Library')</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('threads.index') }}"><i class="ph-fill ph-users-three"></i> @lang('Community')</a>
+                        <a class="nav-link d-flex align-items-center gap-1" href="{{ route('threads.index') }}">
+                            <i class="ph-fill ph-users-three" style="vertical-align: -2px;"></i>
+                            @lang('Community')
+                            <span class="new-badge ms-1" style="vertical-align: top; margin-top: 2px;">
+                                <span class="wave"></span>
+                                <span class="wave"></span>
+                                <span class="wave"></span>
+                                <span class="dot"></span>
+                            </span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('storyweaver-confirm', ['landing_page' => 'storyweaver_default']) }}" class="nav-link" title="StoryWeaver">
