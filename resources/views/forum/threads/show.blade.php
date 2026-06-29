@@ -119,7 +119,7 @@
                             <strong>{{ $post->user->username }}</strong> · {{ $post->created_at->diffForHumans() }}
                         </div>
                         @can('delete', $post)
-                            <form action="{{ route('posts.destroy', [$thread, $post]) }}" method="POST"
+                            <form action="{{ route('threads.posts.destroy', [$thread, $post]) }}" method="POST"
                                   onsubmit="return confirm('{{ __('Delete this reply?') }}')">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-sm btn-link text-danger p-0">@lang('Delete')</button>
