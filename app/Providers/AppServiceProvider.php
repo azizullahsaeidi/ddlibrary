@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use App\Models\News;
 use App\Models\Resource;
 use Carbon\Carbon;
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (app()->isProduction()) {
-            \URL::forceScheme('https');
+            URL::forceScheme('https');
         }
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();
