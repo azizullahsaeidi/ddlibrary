@@ -17,7 +17,7 @@ class TaxonomyController extends Controller
 {
     public function index(Request $request): View
     {
-        $terms = TaxonomyTerm::orderBy('vid', 'desc')->orderBy('weight')
+        $terms = TaxonomyTerm::orderByDesc('vid')->orderBy('weight')
             ->name(request('term'))
             ->vocabulary(request('vocabulary'))
             ->language(request('language'))

@@ -36,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
             $lang = config('app.locale');
             $view->with([
                 'latestNews' => Cache::remember("latest_news_{$lang}", 300, fn() =>
-                News::where('language', $lang)->where('status', 1)->orderBy('id', 'desc')->take(4)->get()
+                News::where('language', $lang)->where('status', 1)->orderByDesc('id')->take(4)->get()
                 ),
                 'latestResources' => Cache::remember("latest_resources_{$lang}", 300, fn() =>
-                Resource::published()->where('language', $lang)->orderBy('id', 'desc')->take(4)->get()
+                Resource::published()->where('language', $lang)->orderByDesc('id')->take(4)->get()
                 ),
             ]);
         });
