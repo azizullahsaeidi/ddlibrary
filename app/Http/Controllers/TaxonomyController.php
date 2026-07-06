@@ -221,9 +221,7 @@ class TaxonomyController extends Controller
     public function editOrCreateTaxonomyVocabulary($vid, $tnid = null)
     {
         $vocabulary = TaxonomyVocabulary::whereVid($vid)->first(); 
-        if ($tnid !== null && $tnid > 0 && TaxonomyTerm::where('vid', $vid)->where('tnid', $tnid)->doesntExist()) {
-            abort(404);
-        }
+        abort_if($tnid !== null && $tnid > 0 && TaxonomyTerm::where('vid', $vid)->where('tnid', $tnid)->doesntExist(), 404);
 
         $terms = TaxonomyTerm::with('taxonomyHierarchy')->where(['vid' => $vid, 'tnid' => $tnid])->get();
         $languages = LaravelLocalization::getSupportedLocales();

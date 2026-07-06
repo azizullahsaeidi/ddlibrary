@@ -461,9 +461,7 @@ if (! function_exists('get_pdf_version')) {
         $process = new Process(['pdfinfo', $file]);
         $process->run();
 
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        throw_unless($process->isSuccessful(), new ProcessFailedException($process));
 
         $output = $process->getOutput();
         // Split the string $output at every instance
@@ -497,9 +495,7 @@ if (! function_exists('lower_pdf_version')) {
             $old_file,
         ]);
         $process->run();
-        if (! $process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        throw_unless($process->isSuccessful(), new ProcessFailedException($process));
 
         return $new_file;
     }

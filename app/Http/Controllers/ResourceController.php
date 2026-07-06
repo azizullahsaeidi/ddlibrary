@@ -252,9 +252,8 @@ class ResourceController extends Controller
             ->withCount('favorites')
             ->findOrFail($resourceId);
 
-        if ($resource->status == 0 && ! (isAdmin() || isLibraryManager())) {  // We don't want anyone else to access unpublished resources
-            abort(403);
-        }
+        // We don't want anyone else to access unpublished resources
+        abort_if($resource->status == 0 && ! (isAdmin() || isLibraryManager()), 403);
 
         $resource->load('subjects', 'levels', 'LearningResourceTypes', 'authors', 'translators', 'publishers', 'creativeCommons');
         $resource->attachments->each(function ($file) {
