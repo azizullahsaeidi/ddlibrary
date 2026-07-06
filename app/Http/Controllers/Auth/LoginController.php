@@ -16,7 +16,9 @@ use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 use RuntimeException;
 
 class LoginController extends Controller implements HasMiddleware
@@ -55,7 +57,21 @@ class LoginController extends Controller implements HasMiddleware
 
     public function handleGoogleCallback(): RedirectResponse
     {
-        $googleUser = Socialite::driver('google')->user();
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (InvalidStateException $e) {
+            Log::warning('Socialite InvalidStateException', [
+                'session_id' => session()->getId(),
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+                'query' => request()->query(),
+                'referer' => request()->header('referer'),
+                'session_data' => session()->all(),
+            ]);
+
+            return redirect()->route('login.google')
+                ->withErrors(['google' => 'Something went wrong logging you in with Google. Please try again.']);
+        }
 
         $user = DB::table('users')->where('provider_id', $googleUser->id)->first();
 
