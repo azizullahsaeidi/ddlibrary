@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\URL;
 use App\Models\News;
 use App\Models\Resource;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;

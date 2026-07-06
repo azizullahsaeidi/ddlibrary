@@ -14,7 +14,7 @@ use App\Models\ResourceView;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserRole;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

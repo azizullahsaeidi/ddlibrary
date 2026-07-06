@@ -574,7 +574,7 @@ class Resource extends Model
             'browser_name' => $data['browser_name'],
             'browser_version' => $data['browser_version'],
             'platform' => $data['platform'],
-            'created_at' => \Carbon\Carbon::now(),
+            'created_at' => \Illuminate\Support\Carbon::now(),
         ]);
     }
 

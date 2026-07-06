@@ -27,7 +27,7 @@ class CalculateMonthlyViews implements ShouldQueue
      */
     public function handle(): void
     {
-        $monthlyViews = SitewidePageView::where('created_at', '>', \Carbon\Carbon::now()->subDays(30))
+        $monthlyViews = SitewidePageView::where('created_at', '>', \Illuminate\Support\Carbon::now()->subDays(30))
             ->where(function ($views) {
                 $views->where(function ($query) {
                     $query->where('is_bot', false);

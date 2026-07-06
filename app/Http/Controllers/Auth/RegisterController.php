@@ -8,7 +8,7 @@ use App\Models\Subscriber;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Rules\RecaptchaRule;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\View\Factory;

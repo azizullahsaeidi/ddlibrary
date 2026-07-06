@@ -34,7 +34,7 @@ use App\Models\TaxonomyTerm;
 use App\Services\ResourceService;
 use App\Traits\LanguageTrait;
 use App\Traits\SitewidePageViewTrait;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
