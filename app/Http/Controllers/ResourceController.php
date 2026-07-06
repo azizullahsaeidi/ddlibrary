@@ -242,7 +242,7 @@ class ResourceController extends Controller
     /**
      * @throws SupportedLocalesNotDefined
      */
-    public function viewPublicResource(Request $request, $resourceId): View
+    public function viewPublicResource(Request $request, int $resourceId): View
     {
         $resource = Resource::with([
             'attachments',
