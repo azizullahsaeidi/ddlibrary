@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FeaturedSpotlightController;
 use App\Http\Controllers\Admin\SubscriberController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -169,6 +170,12 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
             Route::delete('menu/{menuId}', 'destroy')->name('delete_menu');
             Route::post('menu/sort', 'sort')->name('sort_menu');
             Route::get('menu/ajax_get_parents', 'ajaxGetParents')->name('ajax_get_parents');
+        });
+
+        // Spotlight
+        Route::prefix('admin')->middleware('admin')->group(function () {
+            Route::resource('spotlights', FeaturedSpotlightController::class)
+                ->names('admin.spotlights');
         });
 
         // Settings

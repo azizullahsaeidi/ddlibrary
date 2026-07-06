@@ -38,6 +38,7 @@ class HomeController extends Controller
 
         $resources = new Resource;
 
+        $spotlight = FeaturedSpotlight::active()->first();
         $subjectAreas = Cache::remember("subject_areas_{$languageCode}", 3600, fn() => $resources->subjectIconsAndTotal());
         $featured = Cache::remember("featured_collections_{$languageCode}", 3600, fn() => $resources->featuredCollections());
 
@@ -51,6 +52,7 @@ class HomeController extends Controller
         };
 
         return view('home', compact(
+            'spotlight',
             'subjectAreas',
             'featured',
             'howToVideoId'
