@@ -81,7 +81,7 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
     Route::get('resources/priorities/exclusion', [ReportController::class, 'resourcePrioritiesExclusion'])->middleware('LibraryManager');
     Route::post('resources/priorities/exclusion/add/{id}', [ReportController::class, 'resourcePrioritiesExclusionModify'])->middleware('LibraryManager');
     Route::post('resources/priorities/exclusion/remove/{id}', [ReportController::class, 'resourcePrioritiesExclusionModify'])->middleware('LibraryManager');
-    Route::get('resource/{resourceId}', [ResourceController::class, 'viewPublicResource']);
+    Route::get('resource/{resourceId}', [ResourceController::class, 'viewPublicResource'])->where('resourceId', '[0-9]+');
     Route::post('resource/download_counter', [ResourceController::class, 'resourceDownloadCounter'])->middleware('auth');
     Route::get('resources', [ResourceController::class, 'list']);
     Route::get('resources/add', [ResourceController::class, 'form'])->name('resource.form')->middleware('auth', 'verified');
