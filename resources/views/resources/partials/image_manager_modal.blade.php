@@ -36,7 +36,7 @@
                                     @endif
                                 </label>
                                 <select class="form-select"
-                                        id="subject_areas"
+                                        id="image_manager_subject_areas"
                                         name="subject_areas"
                                         data-action="search-images">
                                     <option value="">...</option>
@@ -62,6 +62,7 @@
                                        data-action="search-images"
                                        placeholder="@lang('Search by image name')"
                                        class="form-control">
+                                <div class="form-text text-muted small">@lang('Press Enter to search')</div>
                             </div>
                         </div>
                         <div id="file-list" class="w-100">

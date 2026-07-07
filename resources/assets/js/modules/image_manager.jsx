@@ -3,7 +3,7 @@ import 'cropperjs/dist/cropper.css';
 import axios from 'axios';
 
 async function searchImages(url = null) {
-    const subjectArea = document.getElementById('subject_areas')?.value ?? '';
+    const subjectArea = document.getElementById('image_manager_subject_areas')?.value ?? '';
     const search = document.getElementById('search-input')?.value ?? '';
 
     document.getElementById('loading-message').style.display = 'block';
@@ -206,8 +206,11 @@ document.addEventListener('DOMContentLoaded', function() {
 document.addEventListener('change', (e) => {
     if (e.target.closest('[data-action="search-images"]')) searchImages();
 });
-document.addEventListener('keyup', (e) => {
-    if (e.target.closest('[data-action="search-images"]')) searchImages();
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.closest('[data-action="search-images"]')) {
+        e.preventDefault();
+        searchImages();
+    }
 });
 
 document.addEventListener('change', (e) => {
