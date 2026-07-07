@@ -173,10 +173,7 @@ Route::prefix(LaravelLocalization::setLocale())->middleware('localeSessionRedire
         });
 
         // Spotlight
-        Route::prefix('admin')->middleware('admin')->group(function () {
-            Route::resource('spotlights', FeaturedSpotlightController::class)
-                ->names('admin.spotlights');
-        });
+        Route::resource('spotlights', FeaturedSpotlightController::class)->names('admin.spotlights');
 
         // Settings
         Route::controller(SettingController::class)->group(function () {

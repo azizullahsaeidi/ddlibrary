@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FeaturedSpotlight;
 use App\Models\Resource;
 use App\Traits\SitewidePageViewTrait;
 use Carbon\Carbon;
@@ -38,8 +39,13 @@ class HomeController extends Controller
 
         $resources = new Resource;
 
-        $spotlight = FeaturedSpotlight::active()->first();
-        $subjectAreas = Cache::remember("subject_areas_{$languageCode}", 3600, fn() => $resources->subjectIconsAndTotal());
+        $spotlights = FeaturedSpotlight::active()->get();
+        $subjectAreas = Cache::remember("subject_areas_{$languageCode}", 3600, function () use ($resources) {
+            return $resources->subjectIconsAndTotal()->map(function ($subject) {
+                $subject->total = Resource::countSubjectAreas($subject->id)?->total ?? 0;
+                return $subject;
+            });
+        });
         $featured = Cache::remember("featured_collections_{$languageCode}", 3600, fn() => $resources->featuredCollections());
 
         // $surveys = Survey::find(1);
@@ -52,7 +58,7 @@ class HomeController extends Controller
         };
 
         return view('home', compact(
-            'spotlight',
+            'spotlights',
             'subjectAreas',
             'featured',
             'howToVideoId'
