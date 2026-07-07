@@ -38,6 +38,13 @@
     </div>
 </li>
 
+<!-- Nav Item - Charts -->
+<li class="nav-item">
+    <a class="nav-link" href="{{ URL::to('admin/spotlights') }}">
+        <i class="fas fa-fw fa-star"></i>
+        <span>Spotlights</span></a>
+</li>
+
 <!-- Nav Item - Utilities Collapse Menu -->
 <li class="nav-item">
     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
