@@ -13,7 +13,7 @@ class FeaturedSpotlightFactory extends Factory
             'subtitle' => $this->faker->sentence(8),
             'image_path' => null,
             'link_url' => $this->faker->url(),
-            'link_text' => $this->faker->words(3, true),
+            'link_text' => $this->faker->words(4, true),
             'type' => $this->faker->randomElement(['news', 'resource', 'collection', 'external']),
             'active' => true,
             'starts_at' => null,
