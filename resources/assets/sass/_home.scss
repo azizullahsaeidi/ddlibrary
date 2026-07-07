@@ -13,3 +13,29 @@
   font-size: 1rem;
   font-weight: 500;
 }
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(1) grayscale(100%) brightness(0);
+}
+
+.carousel-indicators button {
+  background-color: #6c757d;
+
+  &.active {
+    background-color: #212529;
+  }
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#spotlightCarousel:hover {
+  .carousel-control-prev,
+  .carousel-control-next {
+    opacity: 1;
+  }
+}
