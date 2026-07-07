@@ -12,28 +12,55 @@
     @include('layouts.search')
 @endsection
 @section('content')
-    <div class="container pt-3 text-center">
-        <a href="{{ route('storyweaver-confirm', ['landing_page' => 'storyweaver_default']) }}" class="text-decoration-none">
-            <div class="row align-items-center justify-content-between py-5">
-                <div class="col-md-6">
-                    <h1 class="text-primary fw-bold text-start">{!! __("Access children's<br>storybooks through<br>StoryWeaver") !!}</h1>
-                </div>
-                <div class="col-md-5">
-                    <div class="card border-0">
-                        <img src="{{ getFile('public/img/Girls_studying.png') }}"
-                             class="card-img-top rounded-0 w-100 object-fit-cover"
-                             alt="Girls studying"
-                             style="height: 300px;"
-                        >
-                        <div class="card-body rounded-bottom-4 bg-secondary text-center fw-bold py-2">
-                            <h3 class="text-white">{!! __("StoryWeaver<br>Library") !!}</h3>
-                        </div>
-                    </div>
-                </div>
+    @if($spotlights->isNotEmpty())
+        <div id="spotlightCarousel" class="carousel slide"
+             data-bs-ride="carousel"
+             data-bs-interval="5000"
+             data-bs-pause="hover"
+             data-bs-wrap="true">
+            <div class="carousel-indicators">
+                @foreach($spotlights as $index => $spotlight)
+                    <button type="button" data-bs-target="#spotlightCarousel"
+                            data-bs-slide-to="{{ $index }}"
+                            class="{{ $index === 0 ? 'active' : '' }}"
+                            aria-current="{{ $index === 0 ? 'true' : 'false' }}">
+                    </button>
+                @endforeach
             </div>
-        </a>
-    </div>
-    <hr class="border-secondary border-5 opacity-100 mx-0">
+
+            <div class="carousel-inner">
+                @foreach($spotlights as $index => $spotlight)
+                    <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                        @switch($spotlight->type)
+                            @case('news')
+                                @include('partials.spotlights.news', ['spotlight' => $spotlight])
+                                @break
+                            @case('resource')
+                                @include('partials.spotlights.resource', ['spotlight' => $spotlight])
+                                @break
+                            @case('collection')
+                                @include('partials.spotlights.collection', ['spotlight' => $spotlight])
+                                @break
+                            @default
+                                @include('partials.spotlights.external', ['spotlight' => $spotlight])
+                        @endswitch
+                    </div>
+                @endforeach
+            </div>
+
+            @if($spotlights->count() > 1)
+                <button class="carousel-control-prev" type="button"
+                        data-bs-target="#spotlightCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button"
+                        data-bs-target="#spotlightCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            @endif
+        </div>
+        <hr class="border-secondary border-5 opacity-100 mx-0">
+    @endif
     <div class="container pt-3 text-center">
         <h2 class="p-2 mb-4">
             @lang('Explore our subjects')
@@ -47,8 +74,7 @@
                     <div class="home-subject-areas">
                         <i class="{{ $subject->phosphor_icon }}"></i>
                         <p>{{ ucfirst(strtolower($subject->name)) }}</p>
-                        <p class="resource-count">{{ App\Models\Resource::countSubjectAreas($subject->id)->total }}
-                            @lang('Resources')</p>
+                        <p class="resource-count">{{ $subject->total }} @lang('Resources')</p>
                     </div>
                 </a>
             @endforeach
