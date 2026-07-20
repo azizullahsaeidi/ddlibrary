@@ -150,7 +150,7 @@ class Resource extends Model
             ->leftJoin('taxonomy_term_data AS ttdp', 'ttdp.id', '=', 'rp.tid')
             ->leftJoin('taxonomy_term_data AS ttdt', 'ttdt.id', '=', 'rt.tid')
             ->where('rs.id', $resourceId)
-            ->orderBy('rs.created_at', 'desc')
+            ->orderByDesc('rs.created_at')
             ->first();
     }
 
@@ -187,7 +187,7 @@ class Resource extends Model
             ->when(isset($requestArray['format']), function ($query) use ($requestArray) {
                 return $query->where('ra.file_mime', $requestArray['format']);
             })
-            ->orderBy('rs.created_at', 'desc')
+            ->orderByDesc('rs.created_at')
             ->groupBy('rs.id', 'rs.language', 'rs.title', 'rs.abstract', 'rs.user_id', 'users.username', 'rs.status', 'rs.updated_at', 'rs.tnid', 'rs.created_at')
             ->paginate(10);
     }
@@ -199,7 +199,7 @@ class Resource extends Model
             ->join('users', 'users.id', '=', 'rs.user_id')
             ->where('rs.language', config('app.locale'))
             ->where('rs.status', 1)
-            ->orderBy('rs.created', 'desc')
+            ->orderByDesc('rs.created')
             ->groupBy('rs.id', 'rs.language', 'rs.title', 'rs.abstract', 'rs.user_id', 'users.username', 'rs.status', 'rs.updated_at', 'rs.created_at')
             ->paginate(32);
     }
@@ -231,7 +231,7 @@ class Resource extends Model
             ->where('vid', $vid)
             ->where('language', $language)
             ->orderBy('ttd.name')
-            ->orderBy('ttd.weight', 'desc')
+            ->orderByDesc('ttd.weight')
             ->get();
     }
 
@@ -257,7 +257,7 @@ class Resource extends Model
                 return $query->join('resources AS r', 'r.id', '=', 'rsa.resource_id')->whereBetween('r.created_at', [$date_from, $date_to]);
             })
             ->groupBy('ttd.name', 'ttd.id', 'ttd.language', 'ttd.tnid')
-            ->orderBy('total', 'DESC')
+            ->orderByDesc('total')
             ->get();
     }
 
@@ -337,7 +337,7 @@ class Resource extends Model
             ->where(function ($query) {
                 $query->where('rs.id', '>=', 11479)->orWhere('rs.id', '<', 10378);
             })
-            ->orderBy('rs.created_at', 'desc')
+            ->orderByDesc('rs.created_at')
             ->groupBy(
                 'rs.id',
                 'rs.language',
@@ -439,7 +439,7 @@ class Resource extends Model
             })
             ->where('ttd.language', $lang)
             ->groupBy('ttd.name', 'ttd.id', 'ttd.language')
-            ->orderBy('total', 'DESC')
+            ->orderByDesc('total')
             ->get();
     }
 
@@ -453,7 +453,7 @@ class Resource extends Model
             })
             ->where('ttd.language', $lang)
             ->groupBy('ttd.id', 'ttd.name', 'ttd.language')
-            ->orderBy('total', 'DESC')
+            ->orderByDesc('total')
             ->get();
     }
 
@@ -466,7 +466,7 @@ class Resource extends Model
             ->where('rs.language', $lang)
             ->groupBy('ra.file_mime', 'rs.language')
             ->orderby('rs.language')
-            ->orderBy('total', 'DESC')
+            ->orderByDesc('total')
             ->get();
     }
 
@@ -574,7 +574,7 @@ class Resource extends Model
             'browser_name' => $data['browser_name'],
             'browser_version' => $data['browser_version'],
             'platform' => $data['platform'],
-            'created_at' => \Carbon\Carbon::now(),
+            'created_at' => \Illuminate\Support\Carbon::now(),
         ]);
     }
 

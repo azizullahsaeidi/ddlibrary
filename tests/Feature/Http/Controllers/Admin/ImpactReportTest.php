@@ -5,7 +5,7 @@ namespace Tests\Feature\Http\Controllers\Admin;
 use App\Http\Controllers\ReportController;
 use App\Models\Resource;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use PHPUnit\Framework\Attributes\Test;

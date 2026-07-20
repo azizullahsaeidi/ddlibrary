@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App;
+use Illuminate\Support\Facades\App;
 use App\Jobs\CalculateMonthlyViews;
 use App\Models\Resource;
 use App\Models\TaxonomyTerm;

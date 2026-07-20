@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FeaturedSpotlight;
 use App\Models\Resource;
 use App\Traits\SitewidePageViewTrait;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;

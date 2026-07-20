@@ -35,13 +35,13 @@ class DashboardControllerTest extends TestCase
         $response->assertOk();
         $response->assertViewIs('admin.main');
         $response->assertViewHas('totalUsers', User::count());
-        $response->assertViewHas('latestUsers', User::orderBy('id', 'desc')->take(5)->get());
+        $response->assertViewHas('latestUsers', User::orderByDesc('id')->take(5)->get());
         $response->assertViewHas('totalResources', Resource::count());
-        $response->assertViewHas('latestResources', Resource::orderBy('id', 'desc')->take(5)->get());
+        $response->assertViewHas('latestResources', Resource::orderByDesc('id')->take(5)->get());
         $response->assertViewHas('totalNews', News::count());
-        $response->assertViewHas('latestNews', News::orderBy('id', 'desc')->take(5)->get());
+        $response->assertViewHas('latestNews', News::orderByDesc('id')->take(5)->get());
         $response->assertViewHas('totalPages', Page::count());
-        $response->assertViewHas('latestPages', Page::orderBy('id', 'desc')->take(5)->get());
+        $response->assertViewHas('latestPages', Page::orderByDesc('id')->take(5)->get());
 
         $response->assertSee('Dashboard');
         $response->assertSee(User::count());

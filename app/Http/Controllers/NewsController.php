@@ -54,9 +54,7 @@ class NewsController extends Controller
         $myNews = new News;
 
         $news = News::find($newsId);
-        if (! $news) {
-            abort(404);
-        }
+        abort_unless($news, 404);
         $this->pageView($request, $news->title);
 
         $translation_id = $news->tnid;

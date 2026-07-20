@@ -34,7 +34,7 @@ use App\Models\TaxonomyTerm;
 use App\Services\ResourceService;
 use App\Traits\LanguageTrait;
 use App\Traits\SitewidePageViewTrait;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -252,9 +252,8 @@ class ResourceController extends Controller
             ->withCount('favorites')
             ->findOrFail($resourceId);
 
-        if ($resource->status == 0 && ! (isAdmin() || isLibraryManager())) {  // We don't want anyone else to access unpublished resources
-            abort(403);
-        }
+        // We don't want anyone else to access unpublished resources
+        abort_if($resource->status == 0 && ! (isAdmin() || isLibraryManager()), 403);
 
         $resource->load('subjects', 'levels', 'LearningResourceTypes', 'authors', 'translators', 'publishers', 'creativeCommons');
         $resource->attachments->each(function ($file) {

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Http\Requests;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Subscriber;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,12 +55,10 @@ class SubscribeRequestTest extends TestCase
     {
         $this->refreshApplicationWithLocale('en');
         // DEBUG: Force check if roles exist
-        $roleCount = \DB::table('roles')->count();
-        $roleFive = \DB::table('roles')->where('id', 5)->first();
+        $roleCount = DB::table('roles')->count();
+        $roleFive = DB::table('roles')->where('id', 5)->first();
 
-        if (! $roleFive) {
-            throw new \Exception("Database has $roleCount roles, but ID 5 is missing!");
-        }
+        throw_unless($roleFive, new \Exception("Database has $roleCount roles, but ID 5 is missing!"));
         $user = User::factory()->create();
         $user->roles()->attach(5);
 

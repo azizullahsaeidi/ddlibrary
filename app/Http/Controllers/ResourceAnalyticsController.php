@@ -83,7 +83,7 @@ class ResourceAnalyticsController extends Controller
         })
             ->groupBy('language')
             ->select('language', DB::raw('count(*) as count'))
-            ->orderBy('count', 'desc')
+            ->orderByDesc('count')
             ->get();
 
         return $totalResources->map(function ($item) {
@@ -160,7 +160,7 @@ class ResourceAnalyticsController extends Controller
             $query->where('language', $request->language);
         }
 
-        return $query->orderBy('downloads_count', 'desc')->take(10)->get();
+        return $query->orderByDesc('downloads_count')->take(10)->get();
     }
 
     private function getTop10FavoriteResources($request): Collection
@@ -201,7 +201,7 @@ class ResourceAnalyticsController extends Controller
             $query->where('language', $request->language);
         }
 
-        return $query->orderBy('views_count', 'desc')->limit(10)->get();
+        return $query->orderByDesc('views_count')->limit(10)->get();
     }
 
     private function getTotalViews($request)

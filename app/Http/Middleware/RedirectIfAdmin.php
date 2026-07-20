@@ -14,9 +14,7 @@ class RedirectIfAdmin
     public function handle(Request $request, Closure $next, ?string $guard = null): mixed
     {
         if (Auth::guard($guard)->check()) {
-            if (! isAdmin()) {
-                abort(403);
-            }
+            abort_unless(isAdmin(), 403);
         } else {
             return redirect('/login');
         }

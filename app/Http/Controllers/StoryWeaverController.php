@@ -56,9 +56,7 @@ class StoryWeaverController extends Controller
 
         $user = auth()->user();
         $user_email = $user->email;
-        if (! $user_email) {
-            abort(405, __('You cannot access the Darkht-e Danesh StoryWeaver Library without a registered email.'));
-        }
+        abort_unless($user_email, 405, __('You cannot access the Darkht-e Danesh StoryWeaver Library without a registered email.'));
         $user_id = $user->id;
 
         $user = UserProfile::where('user_id', $user_id)->first();

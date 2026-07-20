@@ -2,9 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\URL;
 use App\Models\News;
 use App\Models\Resource;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
@@ -22,7 +23,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (app()->isProduction()) {
-            \URL::forceScheme('https');
+            URL::forceScheme('https');
         }
         Schema::defaultStringLength(191);
         Paginator::useBootstrap();
@@ -35,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
             $lang = config('app.locale');
             $view->with([
                 'latestNews' => Cache::remember("latest_news_{$lang}", 300, fn() =>
-                News::where('language', $lang)->where('status', 1)->orderBy('id', 'desc')->take(4)->get()
+                News::where('language', $lang)->where('status', 1)->orderByDesc('id')->take(4)->get()
                 ),
                 'latestResources' => Cache::remember("latest_resources_{$lang}", 300, fn() =>
-                Resource::published()->where('language', $lang)->orderBy('id', 'desc')->take(4)->get()
+                Resource::published()->where('language', $lang)->orderByDesc('id')->take(4)->get()
                 ),
             ]);
         });

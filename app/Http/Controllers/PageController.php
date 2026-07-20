@@ -55,9 +55,8 @@ class PageController extends Controller
         DDLClearSession();
 
         $page = Page::findOrFail($pageId);
-        if ($page->status == 0 && ! (isAdmin() || isLibraryManager())) {  // We don't want anyone else to access unpublished pages
-            abort(403);
-        }
+        // We don't want anyone else to access unpublished pages
+        abort_if($page->status == 0 && ! (isAdmin() || isLibraryManager()), 403);
 
         $translation_id = $page->tnid;
         if ($translation_id) {

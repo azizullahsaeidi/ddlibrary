@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserRole;
 use App\Rules\RecaptchaRule;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -272,7 +272,7 @@ class LoginController extends Controller implements HasMiddleware
     public function authenticated(Request $request, $user): RedirectResponse
     {
         $theUser = User::find(Auth::id());
-        $theUser->accessed_at = \Carbon\Carbon::now();
+        $theUser->accessed_at = \Illuminate\Support\Carbon::now();
         $theUser->save();
 
         return redirect()->intended('home');

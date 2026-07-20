@@ -14,7 +14,7 @@ use App\Models\ResourceView;
 use App\Models\User;
 use App\Models\UserProfile;
 use App\Models\UserRole;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -172,7 +172,7 @@ class ApiController extends Controller
     // News List
     public function newsList($lang = 'en')
     {
-        return News::where('status', 1)->where('language', $lang)->orderBy('id', 'desc')->paginate(32);
+        return News::where('status', 1)->where('language', $lang)->orderByDesc('id')->paginate(32);
     }
 
     // News
@@ -204,7 +204,7 @@ class ApiController extends Controller
         return Menu::select(['id', 'title', 'path'])
             ->where('language', $lang)
             ->where('location', 'bottom-menu')
-            ->orderBy('id', 'desc')
+            ->orderByDesc('id')
             ->get();
     }
 
@@ -341,7 +341,7 @@ class ApiController extends Controller
             })
             ->where('rs.language', $lang)
             ->where('rs.status', 1)
-            ->orderBy('rs.created_at', 'desc')
+            ->orderByDesc('rs.created_at')
             ->groupBy(
                 'rs.id',
                 'rs.language',
