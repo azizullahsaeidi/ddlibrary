@@ -143,8 +143,12 @@ class EPUBViewer {
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
 
-        if (prevBtn) prevBtn.disabled = this.currentPage === 0;
-        if (nextBtn) nextBtn.disabled = this.currentPage >= this.totalPages - 1;
+        if (prevBtn){
+            prevBtn.disabled = this.currentPage === 0;
+        }
+        if (nextBtn) {
+            nextBtn.disabled = this.currentPage >= this.totalPages - 1;
+        }
     }
 
     updateProgress() {
