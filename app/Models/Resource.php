@@ -236,10 +236,13 @@ class Resource extends Model
     }
 
     // Total resources based on language
-    public function totalResourcesByLanguage(): Collection
+    public function totalResourcesByLanguage($lang = null): Collection
     {
         return DB::table('resources AS rs')
-            ->select('rs.language', DB::raw('count(rs.id) as total'))
+            ->select('rs.language', DB::raw('count(DISTINCT rs.id) as total'))
+            ->when($lang, function ($query) use ($lang) {
+                return $query->where('rs.language', $lang);
+            })
             ->groupBy('rs.language')
             ->get();
     }
@@ -248,11 +251,13 @@ class Resource extends Model
     public function totalResourcesBySubject($lang = 'en', $date_from = '', $date_to = ''): Collection
     {
         return DB::table('resource_subject_areas AS rsa')
-            ->select('ttd.id', 'ttd.name', 'ttd.language', 'ttd.tnid', DB::raw('count(rsa.id) as total'))
+            ->select('ttd.id', 'ttd.name', 'ttd.language', 'ttd.tnid', DB::raw('count(DISTINCT rsa.resource_id) as total'))
             ->LeftJoin('taxonomy_term_data AS ttd', function ($join) {
                 $join->on('ttd.id', '=', 'rsa.tid')->where('ttd.vid', 8);
             })
-            ->where('ttd.language', $lang)
+            ->when($lang, function ($query) use ($lang) {
+                return $query->where('ttd.language', $lang);
+            })
             ->when($date_from, function ($query) use ($date_from, $date_to) {
                 return $query->join('resources AS r', 'r.id', '=', 'rsa.resource_id')->whereBetween('r.created_at', [$date_from, $date_to]);
             })
@@ -447,11 +452,13 @@ class Resource extends Model
     public function totalResourcesByType($lang = 'en'): Collection
     {
         return DB::table('resource_learning_resource_types AS rlrt')
-            ->select('ttd.id', 'ttd.name', 'ttd.language', DB::Raw('count(rlrt.id) as total'))
+            ->select('ttd.id', 'ttd.name', 'ttd.language', DB::Raw('count(DISTINCT rlrt.resource_id) as total'))
             ->join('taxonomy_term_data AS ttd', function ($join) {
                 $join->on('ttd.id', '=', 'rlrt.tid')->where('ttd.vid', 7);
             })
-            ->where('ttd.language', $lang)
+            ->when($lang, function ($query) use ($lang) {
+                return $query->where('ttd.language', $lang);
+            })
             ->groupBy('ttd.id', 'ttd.name', 'ttd.language')
             ->orderByDesc('total')
             ->get();

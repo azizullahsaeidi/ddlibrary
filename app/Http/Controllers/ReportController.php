@@ -18,6 +18,128 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ReportController extends Controller
 {
+    public function ddlReport(): View
+    {
+        return view('admin.reports.ddl_resource_report');
+    }
+
+    public function ddlReportData(Request $request): View
+    {
+        $supportedLocales = \LaravelLocalization::getSupportedLocales();
+
+        $request->validate([
+            'type' => 'required|in:unique_resources,subject_coverage,translated_adopted,partner_contributions',
+            'language' => 'required|in:all,'.implode(',', array_keys($supportedLocales)),
+        ]);
+
+        $type = $request->type;
+        $language = $request->language;
+        $selectedLanguage = $language == 'all' ? null : $language;
+        $languageName = $selectedLanguage ? ($supportedLocales[$selectedLanguage]['name'] ?? $selectedLanguage) : 'All languages';
+        $resource = new Resource;
+
+        if ($type == 'unique_resources') {
+            $totalResources = Resource::when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                return $query->where('language', $selectedLanguage);
+            })->count();
+            $resourcesByLanguage = $resource->totalResourcesByLanguage($selectedLanguage);
+            $resourcesBySubject = $resource->totalResourcesBySubject($selectedLanguage);
+            $resourcesByType = $resource->totalResourcesByType($selectedLanguage);
+
+            return view('admin.reports.ddl_resource_report_data', compact('type', 'languageName', 'totalResources', 'resourcesByLanguage', 'resourcesBySubject', 'resourcesByType'));
+        } elseif ($type == 'translated_adopted') {
+            $translated = Resource::whereNotNull('tnid')->whereColumn('tnid', '!=', 'id')
+                ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                    return $query->where('language', $selectedLanguage);
+                });
+            $adopted = Resource::where('primary_tnid', true)
+                ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                    return $query->where('language', $selectedLanguage);
+                });
+            $translatedCount = (clone $translated)->count();
+            $adoptedCount = (clone $adopted)->count();
+            $translatedUtilization = $this->percentage($translatedCount, (clone $translated)->where('views_count', '>', 0)->count());
+            $adoptedUtilization = $this->percentage($adoptedCount, (clone $adopted)->where('views_count', '>', 0)->count());
+
+            $translatedLanguagePairs = DB::table('resources AS translated')
+                ->join('resources AS original', 'original.id', '=', 'translated.tnid')
+                ->whereColumn('translated.id', '!=', 'translated.tnid')
+                ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                    return $query->where('translated.language', $selectedLanguage);
+                })
+                ->selectRaw('original.language AS from_language, translated.language AS to_language, COUNT(DISTINCT translated.id) AS total')
+                ->groupBy('original.language', 'translated.language')
+                ->get();
+
+            $adoptedLanguagePairs = DB::table('resources AS original')
+                ->join('resources AS translated', 'translated.tnid', '=', 'original.id')
+                ->where('original.primary_tnid', true)
+                ->whereColumn('translated.id', '!=', 'translated.tnid')
+                ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                    return $query->where('original.language', $selectedLanguage);
+                })
+                ->selectRaw('original.language AS from_language, translated.language AS to_language, COUNT(DISTINCT original.id) AS total')
+                ->groupBy('original.language', 'translated.language')
+                ->get();
+
+            return view('admin.reports.ddl_resource_report_data', compact(
+                'type',
+                'languageName',
+                'translatedCount',
+                'adoptedCount',
+                'translatedUtilization',
+                'adoptedUtilization',
+                'translatedLanguagePairs',
+                'adoptedLanguagePairs'
+            ));
+        } elseif ($type == 'partner_contributions') {
+            $partnerResources = Resource::whereNotNull('partner')->where('partner', '!=', '')
+                ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
+                    return $query->where('language', $selectedLanguage);
+                });
+            $partnerCount = (clone $partnerResources)->count();
+            $partnerUtilization = $this->percentage($partnerCount, (clone $partnerResources)->where('views_count', '>', 0)->count());
+            $partners = (clone $partnerResources)
+                ->selectRaw('partner, COUNT(*) AS total, SUM(CASE WHEN views_count > 0 THEN 1 ELSE 0 END) AS utilized')
+                ->groupBy('partner')
+                ->orderByDesc('total')
+                ->get()
+                ->each(function ($partner) {
+                    $partner->utilization = $this->percentage($partner->total, $partner->utilized);
+                });
+
+            return view('admin.reports.ddl_resource_report_data', compact(
+                'type',
+                'languageName',
+                'partnerCount',
+                'partnerUtilization',
+                'partners'
+            ));
+        } elseif ($type == 'subject_coverage') {
+            $languages = $selectedLanguage ? [$selectedLanguage] : array_keys($supportedLocales);
+            $coverageRows = collect();
+
+            foreach ($languages as $code) {
+                $subjects = $resource->totalResourcesBySubject($code);
+                $totalSubjects = TaxonomyTerm::where('vid', 8)->where('language', $code)->count();
+                $coveredSubjects = $subjects->where('total', '>', 10)->count();
+                $coverageRows->push((object) [
+                    'language' => $supportedLocales[$code]['name'] ?? $code,
+                    'totalSubjects' => $totalSubjects,
+                    'coveredSubjects' => $coveredSubjects,
+                    'coverage' => $this->percentage($totalSubjects, $coveredSubjects),
+                ]);
+            }
+        }
+
+        return view('admin.reports.ddl_resource_report_data', compact('type', 'coverageRows'));
+    }
+
+    private function percentage($total, $count): float
+    {
+        return $total ? round(($count / $total) * 100, 1) : 0;
+    }
+
     private static function subjectSort($a, $b): int
     {
         return $a['count'] <=> $b['count'];
