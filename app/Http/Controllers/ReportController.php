@@ -75,12 +75,8 @@ class ReportController extends Controller
         $filters = $request->validate([
             'title' => ['nullable', 'string', 'max:191'],
             'language' => ['nullable', 'string', 'max:12'],
-            'date_from' => ['nullable', 'date'],
-            'date_to' => array_values(array_filter([
-                'nullable',
-                'date',
-                $request->filled('date_from') ? 'after_or_equal:date_from' : null,
-            ])),
+            'date_from' => ['nullable', 'date', 'required_with:date_to'],
+            'date_to' => ['nullable', 'date', 'required_with:date_from', 'after_or_equal:date_from'],
             'review_status' => ['nullable', 'in:reviewed,unreviewed'],
         ]);
 
@@ -92,11 +88,11 @@ class ReportController extends Controller
             ->when($filters['language'] ?? null, function ($query, $language) {
                 return $query->where('language', $language);
             })
-            ->when($filters['date_from'] ?? null, function ($query, $dateFrom) {
-                return $query->whereDate('reviewed_at', '>=', $dateFrom);
-            })
-            ->when($filters['date_to'] ?? null, function ($query, $dateTo) {
-                return $query->whereDate('reviewed_at', '<=', $dateTo);
+            ->when(isset($filters['date_from'], $filters['date_to']), function ($query) use ($filters) {
+                return $query->whereBetween('reviewed_at', [
+                    $filters['date_from'].' 00:00:00',
+                    $filters['date_to'].' 23:59:59',
+                ]);
             })
             ->when(($filters['review_status'] ?? null) === 'reviewed', function ($query) {
                 return $query->whereNotNull('reviewed_at');
