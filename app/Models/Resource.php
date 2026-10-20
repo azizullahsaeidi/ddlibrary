@@ -236,12 +236,18 @@ class Resource extends Model
     }
 
     // Total resources based on language
-    public function totalResourcesByLanguage($lang = null): Collection
+    public function totalResourcesByLanguage($lang = null, $dateFrom = null, $dateTo = null): Collection
     {
         return DB::table('resources AS rs')
             ->select('rs.language', DB::raw('count(DISTINCT rs.id) as total'))
             ->when($lang, function ($query) use ($lang) {
                 return $query->where('rs.language', $lang);
+            })
+            ->when($dateFrom, function ($query) use ($dateFrom) {
+                return $query->whereDate('rs.created_at', '>=', $dateFrom);
+            })
+            ->when($dateTo, function ($query) use ($dateTo) {
+                return $query->whereDate('rs.created_at', '<=', $dateTo);
             })
             ->groupBy('rs.language')
             ->get();
@@ -258,8 +264,14 @@ class Resource extends Model
             ->when($lang, function ($query) use ($lang) {
                 return $query->where('ttd.language', $lang);
             })
-            ->when($date_from, function ($query) use ($date_from, $date_to) {
-                return $query->join('resources AS r', 'r.id', '=', 'rsa.resource_id')->whereBetween('r.created_at', [$date_from, $date_to]);
+            ->when($date_from || $date_to, function ($query) use ($date_from, $date_to) {
+                return $query->join('resources AS r', 'r.id', '=', 'rsa.resource_id')
+                    ->when($date_from, function ($query) use ($date_from) {
+                        return $query->whereDate('r.created_at', '>=', $date_from);
+                    })
+                    ->when($date_to, function ($query) use ($date_to) {
+                        return $query->whereDate('r.created_at', '<=', $date_to);
+                    });
             })
             ->groupBy('ttd.name', 'ttd.id', 'ttd.language', 'ttd.tnid')
             ->orderByDesc('total')
@@ -449,7 +461,7 @@ class Resource extends Model
     }
 
     // Total resources based on Resource Type
-    public function totalResourcesByType($lang = 'en'): Collection
+    public function totalResourcesByType($lang = 'en', $dateFrom = null, $dateTo = null): Collection
     {
         return DB::table('resource_learning_resource_types AS rlrt')
             ->select('ttd.id', 'ttd.name', 'ttd.language', DB::Raw('count(DISTINCT rlrt.resource_id) as total'))
@@ -458,6 +470,15 @@ class Resource extends Model
             })
             ->when($lang, function ($query) use ($lang) {
                 return $query->where('ttd.language', $lang);
+            })
+            ->when($dateFrom || $dateTo, function ($query) use ($dateFrom, $dateTo) {
+                return $query->join('resources AS r', 'r.id', '=', 'rlrt.resource_id')
+                    ->when($dateFrom, function ($query) use ($dateFrom) {
+                        return $query->whereDate('r.created_at', '>=', $dateFrom);
+                    })
+                    ->when($dateTo, function ($query) use ($dateTo) {
+                        return $query->whereDate('r.created_at', '<=', $dateTo);
+                    });
             })
             ->groupBy('ttd.id', 'ttd.name', 'ttd.language')
             ->orderByDesc('total')

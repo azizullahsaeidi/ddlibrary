@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body py-2">
                     <div class="row">
-                        <div class="form-group col-md-6 mb-0">
+                        <div class="form-group col-md-3">
                             <label for="report-type">Report type</label>
                             <select class="form-control" id="report-type" data-url="{{ route('ddl-report.data') }}">
                                 <option value="unique_resources">Unique uploaded resources</option>
@@ -82,7 +82,7 @@
                                 <option value="partner_contributions">Partner-contributed resources</option>
                             </select>
                         </div>
-                        <div class="form-group col-md-6 mb-0">
+                        <div class="form-group col-md-3">
                             <label for="report-language">Language</label>
                             <select class="form-control" id="report-language">
                                 <option value="all">All languages</option>
@@ -90,6 +90,14 @@
                                     <option value="{{ $code }}">{{ $properties['name'] }}</option>
                                 @endforeach
                             </select>
+                        </div>
+                        <div class="form-group col-md-3 mb-0">
+                            <label for="report-date-from">From date</label>
+                            <input class="form-control" type="date" id="report-date-from">
+                        </div>
+                        <div class="form-group col-md-3 mb-0">
+                            <label for="report-date-to">To date</label>
+                            <input class="form-control" type="date" id="report-date-to">
                         </div>
                     </div>
                 </div>
@@ -105,14 +113,27 @@
         $(document).ready(function() {
             const reportType = $('#report-type');
             const reportLanguage = $('#report-language');
+            const reportDateFrom = $('#report-date-from');
+            const reportDateTo = $('#report-date-to');
             const reportResults = $('#report-results');
 
             function loadReport() {
+                const dateFrom = reportDateFrom.val();
+                const dateTo = reportDateTo.val();
+
+                if ((dateFrom && !dateTo) || (!dateFrom && dateTo)) {
+                    reportResults.html(
+                        '<div class="alert alert-warning">Please select both From date and To date.</div>');
+                    return;
+                }
+
                 reportResults.html('<div class="card report-panel"><div class="card-body">Loading...</div></div>');
 
                 $.get(reportType.data('url'), {
                         type: reportType.val(),
-                        language: reportLanguage.val()
+                        language: reportLanguage.val(),
+                        date_from: dateFrom,
+                        date_to: dateTo
                     })
                     .done(function(response) {
                         reportResults.html(response);
@@ -123,7 +144,15 @@
                     });
             }
 
-            reportType.add(reportLanguage).on('change', loadReport);
+            reportDateFrom.on('change', function() {
+                reportDateTo.attr('min', this.value);
+            });
+
+            reportDateTo.on('change', function() {
+                reportDateFrom.attr('max', this.value);
+            });
+
+            reportType.add(reportLanguage).add(reportDateFrom).add(reportDateTo).on('change', loadReport);
             loadReport();
         });
     </script>

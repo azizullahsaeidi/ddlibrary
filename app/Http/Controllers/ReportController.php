@@ -27,34 +27,63 @@ class ReportController extends Controller
     {
         $supportedLocales = \LaravelLocalization::getSupportedLocales();
 
-        $request->validate([
+        $validationRules = [
             'type' => 'required|in:unique_resources,subject_coverage,translated_adopted,partner_contributions',
             'language' => 'required|in:all,'.implode(',', array_keys($supportedLocales)),
-        ]);
+            'date_from' => 'nullable|required_with:date_to|date_format:Y-m-d',
+            'date_to' => 'nullable|required_with:date_from|date_format:Y-m-d',
+        ];
+
+        if ($request->filled('date_from')) {
+            $validationRules['date_to'] .= '|after_or_equal:date_from';
+        }
+
+        $request->validate($validationRules);
 
         $type = $request->type;
         $language = $request->language;
         $selectedLanguage = $language == 'all' ? null : $language;
         $languageName = $selectedLanguage ? ($supportedLocales[$selectedLanguage]['name'] ?? $selectedLanguage) : 'All languages';
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
         $resource = new Resource;
 
         if ($type == 'unique_resources') {
             $totalResources = Resource::when($selectedLanguage, function ($query) use ($selectedLanguage) {
                 return $query->where('language', $selectedLanguage);
-            })->count();
-            $resourcesByLanguage = $resource->totalResourcesByLanguage($selectedLanguage);
-            $resourcesBySubject = $resource->totalResourcesBySubject($selectedLanguage);
-            $resourcesByType = $resource->totalResourcesByType($selectedLanguage);
+            })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('created_at', '<=', $dateTo);
+                })
+                ->count();
+            $resourcesByLanguage = $resource->totalResourcesByLanguage($selectedLanguage, $dateFrom, $dateTo);
+            $resourcesBySubject = $resource->totalResourcesBySubject($selectedLanguage, $dateFrom, $dateTo);
+            $resourcesByType = $resource->totalResourcesByType($selectedLanguage, $dateFrom, $dateTo);
 
             return view('admin.reports.ddl_resource_report_data', compact('type', 'languageName', 'totalResources', 'resourcesByLanguage', 'resourcesBySubject', 'resourcesByType'));
         } elseif ($type == 'translated_adopted') {
             $translated = Resource::whereNotNull('tnid')->whereColumn('tnid', '!=', 'id')
                 ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
                     return $query->where('language', $selectedLanguage);
+                })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('created_at', '<=', $dateTo);
                 });
             $adopted = Resource::where('primary_tnid', true)
                 ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
                     return $query->where('language', $selectedLanguage);
+                })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('created_at', '<=', $dateTo);
                 });
             $translatedCount = (clone $translated)->count();
             $adoptedCount = (clone $adopted)->count();
@@ -67,6 +96,12 @@ class ReportController extends Controller
                 ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
                     return $query->where('translated.language', $selectedLanguage);
                 })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('translated.created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('translated.created_at', '<=', $dateTo);
+                })
                 ->selectRaw('original.language AS from_language, translated.language AS to_language, COUNT(DISTINCT translated.id) AS total')
                 ->groupBy('original.language', 'translated.language')
                 ->get();
@@ -77,6 +112,12 @@ class ReportController extends Controller
                 ->whereColumn('translated.id', '!=', 'translated.tnid')
                 ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
                     return $query->where('original.language', $selectedLanguage);
+                })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('original.created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('original.created_at', '<=', $dateTo);
                 })
                 ->selectRaw('original.language AS from_language, translated.language AS to_language, COUNT(DISTINCT original.id) AS total')
                 ->groupBy('original.language', 'translated.language')
@@ -96,6 +137,12 @@ class ReportController extends Controller
             $partnerResources = Resource::whereNotNull('partner')->where('partner', '!=', '')
                 ->when($selectedLanguage, function ($query) use ($selectedLanguage) {
                     return $query->where('language', $selectedLanguage);
+                })
+                ->when($dateFrom, function ($query) use ($dateFrom) {
+                    return $query->whereDate('created_at', '>=', $dateFrom);
+                })
+                ->when($dateTo, function ($query) use ($dateTo) {
+                    return $query->whereDate('created_at', '<=', $dateTo);
                 });
             $partnerCount = (clone $partnerResources)->count();
             $partnerUtilization = $this->percentage($partnerCount, (clone $partnerResources)->where('views_count', '>', 0)->count());
@@ -120,7 +167,7 @@ class ReportController extends Controller
             $coverageRows = collect();
 
             foreach ($languages as $code) {
-                $subjects = $resource->totalResourcesBySubject($code);
+                $subjects = $resource->totalResourcesBySubject($code, $dateFrom, $dateTo);
                 $totalSubjects = TaxonomyTerm::where('vid', 8)->where('language', $code)->count();
                 $coveredSubjects = $subjects->where('total', '>', 10)->count();
                 $coverageRows->push((object) [
