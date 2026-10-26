@@ -40,8 +40,8 @@ class ReportController extends Controller
 
         $request->validate($validationRules);
 
-        $type = $request->type;
-        $language = $request->language;
+        $type = $request->input('type');
+        $language = $request->input('language');
         $selectedLanguage = $language == 'all' ? null : $language;
         $languageName = $selectedLanguage ? ($supportedLocales[$selectedLanguage]['name'] ?? $selectedLanguage) : 'All languages';
         $dateFrom = $request->input('date_from');
