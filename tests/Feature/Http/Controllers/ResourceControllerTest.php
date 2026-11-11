@@ -145,13 +145,13 @@ class ResourceControllerTest extends TestCase
         $learningType = TaxonomyTerm::where('vid', 7)->first();
         $educationalUse = TaxonomyTerm::where('vid', 25)->first();
         $level = TaxonomyTerm::where('vid', 13)->first();
-        Resource::factory()->create(['partner' => 'Example NGO']);
+        Resource::factory()->create(['partner' => 'New NGO']);
 
         $response = $this->post('en/resources/save', [
             'title' => 'Test Resource',
             'author' => 'Test Author',
             'publisher' => 'Test Publisher',
-            'partner' => ' example ngo ',
+            'partner' => ' new ngo ',
             'language' => 'en',
             'abstract' => 'Test abstract content',
             'resource_file_id' => $resourceFile->id,
@@ -169,7 +169,7 @@ class ResourceControllerTest extends TestCase
             'title' => 'Test Resource',
             'language' => 'en',
             'user_id' => $user->id,
-            'partner' => 'Example NGO',
+            'partner' => 'New NGO',
         ]);
 
         $resource = Resource::where('title', 'Test Resource')->first();
@@ -493,14 +493,19 @@ class ResourceControllerTest extends TestCase
         $response->assertViewHas('translations');
         $response->assertViewHas('isTranslated', false);
         $response->assertViewHas('isAdopted', false);
+        $response->assertViewHas('partner', null);
+        $response->assertDontSee("setCustomDimension', 3", false);
     }
 
     #[Test]
-    public function translated_and_adopted_resources_are_sent_to_matomo(): void
+    public function resource_dimensions_are_sent_to_matomo(): void
     {
         $this->refreshApplicationWithLocale('en');
 
-        $adoptedResource = Resource::factory()->create(['primary_tnid' => true]);
+        $adoptedResource = Resource::factory()->create([
+            'primary_tnid' => true,
+            'partner' => 'New NGO',
+        ]);
         $adoptedResource->tnid = $adoptedResource->id;
         $adoptedResource->save();
 
@@ -519,7 +524,9 @@ class ResourceControllerTest extends TestCase
         $adoptedResponse->assertOk();
         $adoptedResponse->assertViewHas('isTranslated', false);
         $adoptedResponse->assertViewHas('isAdopted', true);
+        $adoptedResponse->assertViewHas('partner', 'New NGO');
         $adoptedResponse->assertSee("setCustomDimension', 2, 'yes", false);
+        $adoptedResponse->assertSee("setCustomDimension', 3, \"New NGO\"", false);
     }
 
     #[Test]

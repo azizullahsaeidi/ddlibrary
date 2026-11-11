@@ -9,10 +9,6 @@
             <div class="report-card-label">Partner resources</div>
             <div class="report-card-value">{{ $partnerCount }}</div>
         </div>
-        <div class="report-card">
-            <div class="report-card-label">Partner utilization</div>
-            <div class="report-card-value">{{ $partnerUtilization }}%</div>
-        </div>
     </div>
 </div>
 
@@ -23,7 +19,6 @@
             <div class="report-card">
                 <div class="report-card-label">{{ $partner->partner }}</div>
                 <div class="report-card-value">{{ $partner->total }}</div>
-                <div class="report-card-language">Utilization: {{ $partner->utilization }}%</div>
             </div>
         @empty
             <div class="alert alert-light border mb-0">No data</div>

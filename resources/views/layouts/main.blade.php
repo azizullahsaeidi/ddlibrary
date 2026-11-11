@@ -52,6 +52,9 @@
       @if($isAdopted ?? false)
       _paq.push(['setCustomDimension', 2, 'yes']);
       @endif
+      @if($partner ?? false)
+      _paq.push(['setCustomDimension', 3, @json($partner)]);
+      @endif
       _paq.push(['trackPageView']);
       _paq.push(['enableLinkTracking']);
       (function() {

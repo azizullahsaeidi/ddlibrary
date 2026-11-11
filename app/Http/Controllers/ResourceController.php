@@ -267,6 +267,7 @@ class ResourceController extends Controller
         ['languages_available' => $languages_available, 'translations' => $translations] = $this->resolveAvailableLanguages($resource);
         $isTranslated = $resource->tnid !== null && $resource->tnid !== $resource->id;
         $isAdopted = (bool) $resource->primary_tnid;
+        $partner = $resource->partner;
 
         $ePub = $this->resolveEpubUrl($resource);
 
@@ -278,7 +279,8 @@ class ResourceController extends Controller
             'translations',
             'ePub',
             'isTranslated',
-            'isAdopted'
+            'isAdopted',
+            'partner'
         );
 
         if ($ePub) {

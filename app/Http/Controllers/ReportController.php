@@ -79,8 +79,6 @@ class ReportController extends Controller
 
         $translatedCount = (clone $translated)->count();
         $adoptedCount = (clone $adopted)->count();
-        $translatedUtilization = $this->percentage($translatedCount, (clone $translated)->where('views_count', '>', 0)->count());
-        $adoptedUtilization = $this->percentage($adoptedCount, (clone $adopted)->where('views_count', '>', 0)->count());
 
         $translatedLanguagePairs = DB::table('resources AS translated')
             ->join('resources AS original', 'original.id', '=', 'translated.tnid')
@@ -106,8 +104,6 @@ class ReportController extends Controller
             'languageName',
             'translatedCount',
             'adoptedCount',
-            'translatedUtilization',
-            'adoptedUtilization',
             'translatedLanguagePairs',
             'adoptedLanguagePairs'
         ));
@@ -118,21 +114,16 @@ class ReportController extends Controller
         $partnerResources = Resource::whereNotNull('partner')->where('partner', '!=', '');
         $partnerResources = $this->applyDdlFilters($partnerResources, $selectedLanguage, $dateFrom, $dateTo);
         $partnerCount = (clone $partnerResources)->count();
-        $partnerUtilization = $this->percentage($partnerCount, (clone $partnerResources)->where('views_count', '>', 0)->count());
         $partners = (clone $partnerResources)
-            ->selectRaw('partner, COUNT(*) AS total, SUM(CASE WHEN views_count > 0 THEN 1 ELSE 0 END) AS utilized')
+            ->selectRaw('partner, COUNT(*) AS total')
             ->groupBy('partner')
             ->orderByDesc('total')
-            ->get()
-            ->each(function ($partner) {
-                $partner->utilization = $this->percentage($partner->total, $partner->utilized);
-            });
+            ->get();
 
         return view('admin.reports.ddl_resource_report_data', compact(
             'type',
             'languageName',
             'partnerCount',
-            'partnerUtilization',
             'partners'
         ));
     }

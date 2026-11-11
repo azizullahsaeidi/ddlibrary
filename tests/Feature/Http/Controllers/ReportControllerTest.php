@@ -65,8 +65,6 @@ class ReportControllerTest extends TestCase
         $translatedResponse->assertViewHasAll([
             'translatedCount',
             'adoptedCount',
-            'translatedUtilization',
-            'adoptedUtilization',
             'translatedLanguagePairs',
             'adoptedLanguagePairs',
         ]);
@@ -78,7 +76,6 @@ class ReportControllerTest extends TestCase
         $partnerResponse->assertOk();
         $partnerResponse->assertViewHasAll([
             'partnerCount',
-            'partnerUtilization',
             'partners',
         ]);
     }

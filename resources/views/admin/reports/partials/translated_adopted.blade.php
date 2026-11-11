@@ -10,16 +10,8 @@
             <div class="report-card-value">{{ $translatedCount }}</div>
         </div>
         <div class="report-card">
-            <div class="report-card-label">Translated utilization</div>
-            <div class="report-card-value">{{ $translatedUtilization }}%</div>
-        </div>
-        <div class="report-card">
             <div class="report-card-label">Adopted resources</div>
             <div class="report-card-value">{{ $adoptedCount }}</div>
-        </div>
-        <div class="report-card">
-            <div class="report-card-label">Adopted utilization</div>
-            <div class="report-card-value">{{ $adoptedUtilization }}%</div>
         </div>
     </div>
 </div>
